@@ -1,17 +1,31 @@
+SRC=src/
+INCLUDE=include/
+
+EXEC_NAME=mach
+
 CC=gcc
 CFLAGS=-g -Wall
 LIBS=-lm
 
-all: prog1
+all: $(EXEC_NAME)
 
-prog1: prog1.o
+$(EXEC_NAME): main.o trans.o state.o machine.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
-prog.o: prog.c
+main.o: $(SRC)main.c $(INCLUDE)types.h $(INCLUDE)trans.h $(INCLUDE)state.h $(INCLUDE)machine.h
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+trans.o: $(SRC)trans.c $(INCLUDE)types.h $(INCLUDE)trans.h
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+state.o: $(SRC)state.c $(INCLUDE)types.h $(INCLUDE)state.h
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+machine.o: $(SRC)machine.c $(INCLUDE)types.h $(INCLUDE)machine.h
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 valgrind:
-	valgrind --leak-check=full -v ./prog1
+	valgrind --leak-check=full -v ./$(EXEC_NAME)
 
 clean:
-	rm prog1.o prog1
+	rm *.o $(EXEC_NAME)
